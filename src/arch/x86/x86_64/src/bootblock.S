@@ -349,6 +349,16 @@ lme:
 .code64
 
 _identity:
+	// Enable SSE. FSP-S uses some SSE instructions
+	movq %cr0, %rax
+	andw 0xFFFB, %ax
+	orw 0x2, %ax
+	movq %rax, %cr0
+	movq %cr4, %rax
+	orw  $(3<<9), %ax
+	movq %rax, %cr4
+
+
 	call _start
 1:	 jmp 1b
 
