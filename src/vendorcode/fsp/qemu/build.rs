@@ -43,8 +43,9 @@ fn main() -> std::io::Result<()> {
         // The input header we would like to generate bindings for.
         .header("src/wrapper.h")
         .clang_args(include_paths.iter().map(|include| format!("{}{}", "-I", include.display())))
+        .clang_args(&["-DEFIAPI=__attribute__((ms_abi))"])
         // Tell cargo to invalidate the built crate whenever any of the included header files
-        // changed.
+        // change.
         .parse_callbacks(Box::new(bindgen::CargoCallbacks))
         // Use core:: instead of std::
         .use_core()
@@ -55,25 +56,25 @@ fn main() -> std::io::Result<()> {
         //.impl_debug(true)
         //.derive_copy(true)
         // Whitelist of types and constants to import.
-        .whitelist_type("FSPM_UPD")
-        .whitelist_type("FSPS_UPD")
-        .whitelist_type("FSPT_UPD")
-        .whitelist_type("FSP_S_CONFIG")
-        .whitelist_type("FSP_T_CONFIG")
+        .whitelist_type("EFI_COMMON_SECTION_HEADER2?")
+        .whitelist_type("EFI_FFS_FILE_HEADER2?")
+        .whitelist_type("EFI_FIRMWARE_VOLUME_(EXT_)?HEADER")
+        .whitelist_type("FSP[MST]_UPD")
         .whitelist_type("FSP_INFO_HEADER")
-        .whitelist_type("EFI_COMMON_SECTION_HEADER")
-        .whitelist_type("EFI_COMMON_SECTION_HEADER2")
-        .whitelist_type("EFI_FFS_FILE_HEADER")
-        .whitelist_type("EFI_FFS_FILE_HEADER2")
-        .whitelist_type("EFI_FIRMWARE_VOLUME_EXT_HEADER")
-        .whitelist_type("EFI_FIRMWARE_VOLUME_HEADER")
+        .whitelist_type("FSP_MEMORY_INIT")
+        .whitelist_type("FSP_MULTI_PHASE_SI_INIT")
+        .whitelist_type("FSP_NOTIFY_PHASE")
+        .whitelist_type("FSP_SILICON_INIT")
+        .whitelist_type("FSP_TEMP_RAM_EXIT")
+        .whitelist_type("FSP_TEMP_RAM_INIT")
+        .whitelist_type("FSP_[ST]_CONFIG")
         .whitelist_var("EFI_FV_FILETYPE_RAW")
         .whitelist_var("EFI_SECTION_RAW")
         .whitelist_var("FFS_ATTRIB_CHECKSUM")
         .whitelist_var("FFS_ATTRIB_LARGE_FILE")
-        .whitelist_var("FSPM_UPD_SIGNATURE")
-        .whitelist_var("FSPS_UPD_SIGNATURE")
-        .whitelist_var("FSPT_UPD_SIGNATURE")
+        .whitelist_var("FSP[MST]_UPD_SIGNATURE")
+        .whitelist_var("FSP_STATUS_RESET_REQUIRED_.*")
+        .whitelist_var("BOOT_.*") // BOOT_MODE consts
         // Blacklist types implemented in Rust.
         .blacklist_type("GUID")
         .blacklist_type("EFI_GUID")

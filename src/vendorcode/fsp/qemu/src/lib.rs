@@ -22,3 +22,4 @@ macro_rules! blob_macro {
 #[used]
 #[link_section = ".fspblob"]
 static FSP_BLOB: [u8; blob_macro!().len()] = *blob_macro!();
+

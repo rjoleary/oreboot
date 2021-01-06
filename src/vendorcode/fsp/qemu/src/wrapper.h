@@ -9,3 +9,6 @@
 #include <Guid/FspHeaderFile.h>
 #include <Pi/PiFirmwareFile.h>
 #include <Pi/PiFirmwareVolume.h>
+
+// BOOT_MODE
+#include <Pi/PiBootMode.h>
