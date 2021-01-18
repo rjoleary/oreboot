@@ -47,6 +47,7 @@ jobs:
       make ciprepare
       cd src/mainboard/emulation/qemu-q35
       make
+      make stack-sizes 2>/dev/null | grep '0x[0-9a-f]\+\s\+[0-9]\+\s\+_start'
 - job: BuildFSPQEMU
   displayName: 'Build FSP QEMU'
   steps:
@@ -59,6 +60,7 @@ jobs:
       make ciprepare
       cd src/mainboard/emulation/qemu-fsp
       make
+      make stack-sizes 2>/dev/null | grep '0x[0-9a-f]\+\s\+[0-9]\+\s\+_start'
 - job: TestSiFiveQEMU
   displayName: 'Test RISC-V SiFive board in QEMU'
   steps:
@@ -98,6 +100,7 @@ jobs:
   - script: |
       pushd src/mainboard/emulation/qemu-riscv
       make
+      make stack-sizes 2>/dev/null | grep '0x[0-9a-f]\+\s\+[0-9]\+\s\+_start'
       popd
     displayName: 'Build oreboot image'
   - script: |
