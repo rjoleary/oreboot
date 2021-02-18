@@ -19,7 +19,7 @@ BROKEN := \
 
 MAINBOARDS := $(filter-out $(BROKEN), $(wildcard src/mainboard/*/*/Makefile))
 
-TOOLCHAIN_VER := nightly-2020-10-25
+TOOLCHAIN_VER := $(shell grep channel rust-toolchain | grep -e '".*"' -o)
 BINUTILS_VER := 0.3.2
 
 .PHONY: mainboards $(MAINBOARDS)
@@ -29,12 +29,6 @@ $(MAINBOARDS):
 	cd $(dir $@) && make
 
 firsttime:
-	rustup override set $(TOOLCHAIN_VER)
-	rustup component add rust-src llvm-tools-preview rustfmt clippy
-	rustup target add riscv64imac-unknown-none-elf
-	rustup target add riscv32imc-unknown-none-elf
-	rustup target add armv7r-none-eabi
-	rustup target add aarch64-unknown-none-softfloat
 	cargo install $(if $(BINUTILS_VER),--version $(BINUTILS_VER),) cargo-binutils
 
 firsttime_fsp:
@@ -42,6 +36,8 @@ firsttime_fsp:
 
 debiansysprepare:
 	sudo apt-get install device-tree-compiler pkg-config libssl-dev llvm-dev libclang-dev clang
+	# --default-toolchain is purely an optimization to avoid downloading stable Rust first.
+	# -y makes it non-interactive.
 	curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $(TOOLCHAIN_VER)
 
 .PHONY: ciprepare debiansysprepare firsttime
@@ -76,6 +72,7 @@ BROKEN_CRATES_TO_TEST := \
 	src/arch/riscv/rv64/Cargo.toml \
 	src/cpu/armltd/cortex-a9/Cargo.toml \
 	src/cpu/lowrisc/ibex/Cargo.toml \
+	src/mainboard/aaeon/upsquared/Cargo.toml \
 	src/mainboard/amd/romecrb/Cargo.toml \
 	src/mainboard/ast/ast25x0/Cargo.toml \
 	src/mainboard/emulation/qemu-aarch64/Cargo.toml \
@@ -97,6 +94,7 @@ $(CRATES_TO_TEST):
 test: $(CRATES_TO_TEST)
 
 BROKEN_CRATES_TO_CLIPPY := \
+	src/mainboard/aaeon/upsquared/Cargo.toml \
 	src/mainboard/amd/romecrb/Cargo.toml \
 	src/mainboard/ast/ast25x0/Cargo.toml \
 	src/mainboard/emulation/qemu-armv7/Cargo.toml \
